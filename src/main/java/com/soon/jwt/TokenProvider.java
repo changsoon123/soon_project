@@ -1,5 +1,6 @@
 package com.soon.jwt;
 
+import com.soon.user.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -26,7 +27,7 @@ public class TokenProvider {
      *
      *
      */
-    public String createToken() {
+    public String createToken(User userEntity) {
 
         // 토큰 만료시간 4시간으로 설정
         Date expiry = Date.from(
@@ -34,7 +35,7 @@ public class TokenProvider {
         );
 
         Map<String, Object> claims = new HashMap<>();
-        claims.put("customClaim", "someValue");
+        claims.put("name", userEntity.getUsername());
 
         return Jwts.builder()
                 .signWith(
@@ -45,7 +46,7 @@ public class TokenProvider {
                 .setIssuer("Soon")
                 .setIssuedAt(new Date())
                 .setExpiration(expiry)
-                .setSubject("someSubject")
+                .setSubject(userEntity.getUsername())
                 .compact();
     }
 
