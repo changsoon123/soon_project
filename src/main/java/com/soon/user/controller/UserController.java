@@ -6,10 +6,10 @@ import com.soon.user.dto.UserRequestDTO;
 import com.soon.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 @RestController
@@ -21,6 +21,19 @@ public class UserController {
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping("/check/{fieldName}/{value}")
+    public ResponseEntity<Map<String, Boolean>> checkAvailability(
+            @PathVariable String fieldName,
+            @PathVariable String value) {
+
+        boolean isAvailable = userService.isFieldAvailable(fieldName, value);
+
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("isAvailable", isAvailable);
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/signup")

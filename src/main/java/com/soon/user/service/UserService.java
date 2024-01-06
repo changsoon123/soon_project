@@ -28,6 +28,18 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    public boolean isFieldAvailable(String fieldName, String value) {
+
+        return switch (fieldName) {
+            case "username" -> isUsernameUnique(value);
+            case "email" -> isEmailUnique(value);
+            case "phoneNumber" -> isPhoneNumberUnique(value);
+            case "nickname" -> isNickUnique(value);
+            // 다른 필드에 대한 중복 체크도 추가할 수 있습니다.
+            default -> throw new IllegalArgumentException("Unsupported field name: " + fieldName);
+        };
+    }
+
     // 회원 가입 메서드
     public void signUp(UserRequestDTO userRequest) {
 
@@ -67,11 +79,20 @@ public class UserService {
             throw new IllegalArgumentException("중복된 핸드폰 번호입니다.");
         }
 
+        if (!isValidNickname(userRequest.getNickname())) {
+            throw new IllegalArgumentException("유효하지 않은 닉네임 형식입니다.");
+        }
+
+        if(!isNickUnique(userRequest.getNickname())){
+            throw new IllegalArgumentException("중복된 닉네임 입니다.");
+        }
+
         User newUser = new User();
         newUser.setUsername(userRequest.getUsername());
         newUser.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         newUser.setEmail(userRequest.getEmail());
         newUser.setPhoneNumber(userRequest.getPhoneNumber());
+        newUser.setNickname(userRequest.getNickname());
 
         userRepository.save(newUser);
     }
@@ -82,7 +103,7 @@ public class UserService {
 
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-
+            System.out.println(user);
             // 비밀번호 검증
             if (passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
                 // 토큰 생성 및 반환
@@ -99,7 +120,8 @@ public class UserService {
         return userRequest.getUsername() != null &&
                 userRequest.getPassword() != null &&
                 userRequest.getEmail() != null &&
-                userRequest.getPhoneNumber() != null;
+                userRequest.getPhoneNumber() != null &&
+                userRequest.getNickname() != null;
     }
 
     private boolean isValidUsername(String username) {
@@ -126,6 +148,11 @@ public class UserService {
         return phoneNumber.matches(phoneRegex);
     }
 
+    private boolean isValidNickname(String nickname) {
+        String nicknameRegex = "^[A-Za-z0-9가-힣]{2,}$";
+        return nickname.matches(nicknameRegex);
+    }
+
     // 중복 검사 메서드 추가
     private boolean isUsernameUnique(String username) {
         return !userRepository.existsByUsername(username);
@@ -139,4 +166,7 @@ public class UserService {
         return !userRepository.existsByPhoneNumber(phoneNumber);
     }
 
+    private boolean isNickUnique(String nick) {
+        return !userRepository.existsByNickname(nick);
+    }
 }

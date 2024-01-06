@@ -46,7 +46,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers(HttpMethod.PATCH, "/api/user/profile").authenticated()
-                                .requestMatchers("/", "/api/user/**","/api/data","/api/signup","/api/login").permitAll()
+                                .requestMatchers("/", "/api/user/**","/api/data","/api/signup","/api/login","/api/check/**"
+                                    ,"/api/check/nickname/**","/api/check/email/**","/api/check/phoneNumber/**","/api/check/username/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .addFilterAfter(
