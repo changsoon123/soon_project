@@ -103,7 +103,7 @@ public class UserService {
 
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            System.out.println(user);
+
             // 비밀번호 검증
             if (passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
                 // 토큰 생성 및 반환

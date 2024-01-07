@@ -37,6 +37,7 @@ public class TokenProvider {
         Map<String, Object> claims = new HashMap<>();
         claims.put("name", userEntity.getUsername());
 
+
         return Jwts.builder()
                 .signWith(
                         Keys.hmacShaKeyFor(SECRET_KEY.getBytes()),
