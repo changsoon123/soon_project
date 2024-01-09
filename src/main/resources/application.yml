@@ -14,3 +14,20 @@ spring:
   config:
     import:
       - classpath:keys.yml
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ${kakao.client-id}
+            client-secret: ${kakao.client-secret}
+            redirect-uri: 'http://localhost:8080/api/login/kakao'
+            scope: openid
+            authorization-grant-type: authorization_code
+            user-info-uri: 'https://kapi.kakao.com/v2/user/me'
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id

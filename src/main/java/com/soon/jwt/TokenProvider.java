@@ -1,5 +1,6 @@
 package com.soon.jwt;
 
+import com.soon.user.entity.KakaoUser;
 import com.soon.user.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -48,6 +49,29 @@ public class TokenProvider {
                 .setIssuedAt(new Date())
                 .setExpiration(expiry)
                 .setSubject(userEntity.getUsername())
+                .compact();
+    }
+
+    public String createKakaoToken(KakaoUser kakaoUser) {
+        // 토큰 만료시간 4시간으로 설정
+        Date expiry = Date.from(
+                Instant.now().plus(4, ChronoUnit.HOURS)
+        );
+
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("kakaoId", kakaoUser.getKakaoId());
+        claims.put("nickname", kakaoUser.getNickname());
+
+        return Jwts.builder()
+                .signWith(
+                        Keys.hmacShaKeyFor(SECRET_KEY.getBytes()),
+                        SignatureAlgorithm.HS512
+                )
+                .setClaims(claims)
+                .setIssuer("Soon")
+                .setIssuedAt(new Date())
+                .setExpiration(expiry)
+                .setSubject(kakaoUser.getNickname()) // 이 부분은 고유한 값이어야 합니다.
                 .compact();
     }
 
