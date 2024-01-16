@@ -1,9 +1,6 @@
 package com.soon.user.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
@@ -14,7 +11,10 @@ public class KakaoUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String kakaoId;
+    @Column(name = "user_id")
+    private String userId;
+
+    @Column(name = "nickname")
     private String nickname;
 
 }

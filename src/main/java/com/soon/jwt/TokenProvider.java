@@ -59,7 +59,7 @@ public class TokenProvider {
         );
 
         Map<String, Object> claims = new HashMap<>();
-        claims.put("kakaoId", kakaoUser.getKakaoId());
+        claims.put("userId", kakaoUser.getUserId());
         claims.put("nickname", kakaoUser.getNickname());
 
         return Jwts.builder()
