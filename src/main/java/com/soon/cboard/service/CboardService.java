@@ -25,7 +25,7 @@ public class CboardService {
         return cboardRepository.findById(id);
     }
 
-    public Cboard createBoard(CboardDto boardDto) {
+    public Cboard createBoard(Cboard boardDto) {
         Cboard board = new Cboard();
         board.setTitle(boardDto.getTitle());
         board.setContent(boardDto.getContent());
@@ -33,7 +33,7 @@ public class CboardService {
         return cboardRepository.save(board);
     }
 
-    public Cboard updateBoard(Long id, CboardDto updatedBoardDto) {
+    public Cboard updateBoard(Long id, Cboard updatedBoardDto) {
         Optional<Cboard> existingBoardOptional = cboardRepository.findById(id);
 
         if (existingBoardOptional.isPresent()) {
