@@ -10,6 +10,7 @@ import java.util.Date;
 @NoArgsConstructor
 public class CboardDto {
 
+    private Long id;
     private String title;
     private String content;
     private Date createdAt;

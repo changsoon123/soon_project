@@ -49,7 +49,7 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.PATCH, "/api/user/profile").authenticated()
                                 .requestMatchers("/", "/api/user/**","/api/data","/api/signup","/api/login","/api/check/**"
                                     ,"/api/check/nickname/**","/api/check/email/**","/api/check/phoneNumber/**","/api/check/username/**"
-                                    ,"/api/kakao/login","/cboard/boards").permitAll()
+                                    ,"/api/kakao/login","/cboard/boards","/cboard/boards/**").permitAll()
                                 .anyRequest().authenticated()
 
                 )

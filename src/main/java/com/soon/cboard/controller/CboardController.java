@@ -20,9 +20,10 @@ public class CboardController {
         return cboardService.getAllBoards();
     }
 
-    @GetMapping("/board/{id}")
-    public Optional<Cboard> getBoardById(@PathVariable Long id) {
-        return cboardService.getBoardById(id);
+    @GetMapping("/boards/{page}")
+    public List<Cboard> getBoardsByPage(@PathVariable int page) {
+        int pageSize = 10; // 페이지당 게시물 수
+        return cboardService.getBoardsByPage(page, pageSize);
     }
 
     @PostMapping("/board")

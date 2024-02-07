@@ -21,8 +21,10 @@ public class CboardService {
         return cboardRepository.findAll();
     }
 
-    public Optional<Cboard> getBoardById(Long id) {
-        return cboardRepository.findById(id);
+    public List<Cboard> getBoardsByPage(int page, int pageSize) {
+        // 페이지별로 게시물을 가져오는 로직을 추가해야 합니다.
+        int offset = (page - 1) * pageSize;
+        return cboardRepository.findBoardsByPage(offset, pageSize);
     }
 
     public Cboard createBoard(Cboard boardDto) {
