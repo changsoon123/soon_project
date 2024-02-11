@@ -2,18 +2,22 @@ package com.soon.cboard.controller;
 
 import com.soon.cboard.entity.Cboard;
 import com.soon.cboard.service.CboardService;
+import com.soon.jwt.TokenProvider;
+import com.soon.jwt.TokenUserInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
+@Slf4j
 @RestController
 @RequestMapping("/cboard")
 public class CboardController {
 
     @Autowired
     private CboardService cboardService;
+
 
     @GetMapping("/boards")
     public List<Cboard> getAllBoards() {
@@ -27,8 +31,8 @@ public class CboardController {
     }
 
     @PostMapping("/board")
-    public Cboard createBoard(@RequestBody Cboard board) {
-        return cboardService.createBoard(board);
+    public Cboard createBoard(@RequestBody Cboard board, @RequestHeader("Authorization") String token) {
+        return cboardService.createBoard(board,token);
     }
 
     @PutMapping("/board/{id}")

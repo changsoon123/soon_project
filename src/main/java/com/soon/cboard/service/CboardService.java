@@ -4,6 +4,8 @@ package com.soon.cboard.service;
 import com.soon.cboard.dto.CboardDto;
 import com.soon.cboard.entity.Cboard;
 import com.soon.cboard.repository.CboardRepository;
+import com.soon.jwt.TokenProvider;
+import com.soon.jwt.TokenUserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,9 @@ public class CboardService {
     @Autowired
     private CboardRepository cboardRepository;
 
+    @Autowired
+    private TokenProvider tokenProvider;
+
     public List<Cboard> getAllBoards() {
         return cboardRepository.findAll();
     }
@@ -27,8 +32,10 @@ public class CboardService {
         return cboardRepository.findBoardsByPage(offset, pageSize);
     }
 
-    public Cboard createBoard(Cboard boardDto) {
+    public Cboard createBoard(Cboard boardDto, String token) {
+        TokenUserInfo userInfo = tokenProvider.validateAndReturnTokenUserInfo(token.substring(7));
         Cboard board = new Cboard();
+        board.setNickname(userInfo.getUserNick());
         board.setTitle(boardDto.getTitle());
         board.setContent(boardDto.getContent());
         board.setCreatedAt(new Date());
