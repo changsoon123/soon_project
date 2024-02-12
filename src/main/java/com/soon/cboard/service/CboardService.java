@@ -1,13 +1,13 @@
 package com.soon.cboard.service;
 
-
-import com.soon.cboard.dto.CboardDto;
 import com.soon.cboard.entity.Cboard;
 import com.soon.cboard.repository.CboardRepository;
 import com.soon.jwt.TokenProvider;
 import com.soon.jwt.TokenUserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Date;
 import java.util.List;
@@ -28,8 +28,8 @@ public class CboardService {
 
     public List<Cboard> getBoardsByPage(int page, int pageSize) {
         // 페이지별로 게시물을 가져오는 로직을 추가해야 합니다.
-        int offset = (page - 1) * pageSize;
-        return cboardRepository.findBoardsByPage(offset, pageSize);
+        Pageable pageable = PageRequest.of(page - 1, pageSize);
+        return cboardRepository.findAll(pageable).getContent();
     }
 
     public Cboard createBoard(Cboard boardDto, String token) {

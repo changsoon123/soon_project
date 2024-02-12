@@ -22,15 +22,8 @@ public class KakaoLoginController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody KakaoUser user) {
         // 로그인 로직 처리
-        KakaoUser existingUser = kakaoService.findByUserId(user.getUserId());
-        if (existingUser == null) {
-            // 새로운 사용자, 데이터베이스에 저장
-            String token = kakaoService.save(user);
-            return ResponseEntity.ok(new LoginResponseDTO(token));
-        } else {
-            // 기존 사용자, 필요한 작업 수행
-            return ResponseEntity.ok("기존 사용자입니다. 필요한 작업을 수행하세요.");
-        }
+        String token = kakaoService.save(user);
+        return ResponseEntity.ok(new LoginResponseDTO(token));
     }
 
 }
