@@ -6,6 +6,7 @@ import com.soon.jwt.TokenProvider;
 import com.soon.jwt.TokenUserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
 
@@ -26,10 +27,10 @@ public class CboardService {
         return cboardRepository.findAll();
     }
 
-    public List<Cboard> getBoardsByPage(int page, int pageSize) {
+    public Slice<Cboard> getBoardsByPage(int page, int pageSize) {
         // 페이지별로 게시물을 가져오는 로직을 추가해야 합니다.
         Pageable pageable = PageRequest.of(page - 1, pageSize);
-        return cboardRepository.findAll(pageable).getContent();
+        return cboardRepository.findAll(pageable);
     }
 
     public Cboard createBoard(Cboard boardDto, String token) {
