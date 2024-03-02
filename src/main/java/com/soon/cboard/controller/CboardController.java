@@ -20,14 +20,16 @@ public class CboardController {
     private CboardService cboardService;
 
 
-    @GetMapping("/boards")
-    public List<Cboard> getAllBoards() {
-        return cboardService.getAllBoards();
-    }
+//    @GetMapping("/boards")
+//    public List<Cboard> getAllBoards() {
+//        System.out.println("지금 이게 출력 되면 안돼;;;");
+//        return cboardService.getAllBoards();
+//    }
 
-    @GetMapping("/boards/{page}")
-    public Slice<Cboard> getBoardsByPage(@PathVariable int page) {
+    @GetMapping("/boards")
+    public List<Cboard> getBoardsByPage(@RequestParam int page) {
         int pageSize = 10; // 페이지당 게시물 수
+        log.info("- page : {}", page);
         return cboardService.getBoardsByPage(page, pageSize);
     }
 

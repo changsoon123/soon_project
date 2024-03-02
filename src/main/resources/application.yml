@@ -14,4 +14,9 @@ spring:
   config:
     import:
       - classpath:keys.yml
+  logging:
+    level:
+      root: DEBUG
+      org.springframework: DEBUG
+      com.example: DEBUG
 

@@ -23,14 +23,14 @@ public class CboardService {
     @Autowired
     private TokenProvider tokenProvider;
 
-    public List<Cboard> getAllBoards() {
-        return cboardRepository.findAll();
-    }
+//    public List<Cboard> getAllBoards() {
+//        return cboardRepository.findAll();
+//    }
 
-    public Slice<Cboard> getBoardsByPage(int page, int pageSize) {
+    public List<Cboard> getBoardsByPage(int page, int pageSize) {
         // 페이지별로 게시물을 가져오는 로직을 추가해야 합니다.
         Pageable pageable = PageRequest.of(page - 1, pageSize);
-        return cboardRepository.findAll(pageable);
+        return cboardRepository.findAll(pageable).getContent();
     }
 
     public Cboard createBoard(Cboard boardDto, String token) {
