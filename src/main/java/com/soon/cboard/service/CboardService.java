@@ -5,10 +5,10 @@ import com.soon.cboard.repository.CboardRepository;
 import com.soon.jwt.TokenProvider;
 import com.soon.jwt.TokenUserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
-import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
@@ -27,10 +27,10 @@ public class CboardService {
 //        return cboardRepository.findAll();
 //    }
 
-    public List<Cboard> getBoardsByPage(int page, int pageSize) {
-        // 페이지별로 게시물을 가져오는 로직을 추가해야 합니다.
-        Pageable pageable = PageRequest.of(page - 1, pageSize);
-        return cboardRepository.findAll(pageable).getContent();
+    public Page<Cboard> getBoardsByPage(Pageable pageable) {
+
+        // JPA Repository를 사용하여 페이지별 게시물을 가져옴
+        return cboardRepository.findAllByOrderByCreatedAtDesc(pageable);
     }
 
     public Cboard createBoard(Cboard boardDto, String token) {

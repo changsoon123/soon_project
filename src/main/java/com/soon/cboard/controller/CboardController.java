@@ -6,6 +6,8 @@ import com.soon.jwt.TokenProvider;
 import com.soon.jwt.TokenUserInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,10 +29,14 @@ public class CboardController {
 //    }
 
     @GetMapping("/boards")
-    public List<Cboard> getBoardsByPage(@RequestParam int page) {
-        int pageSize = 10; // 페이지당 게시물 수
+    public Page<Cboard> getBoardsByPage(@RequestParam(defaultValue = "0") int page,
+                                        @RequestParam(defaultValue = "10") int pageSize) {
+
         log.info("- page : {}", page);
-        return cboardService.getBoardsByPage(page, pageSize);
+
+        PageRequest pageRequest = PageRequest.of(page, pageSize);
+
+        return cboardService.getBoardsByPage(pageRequest);
     }
 
     @PostMapping("/board")
