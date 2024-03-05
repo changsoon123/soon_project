@@ -23,14 +23,16 @@ public class CboardService {
     @Autowired
     private TokenProvider tokenProvider;
 
-//    public List<Cboard> getAllBoards() {
-//        return cboardRepository.findAll();
-//    }
 
     public Page<Cboard> getBoardsByPage(Pageable pageable) {
 
         // JPA Repository를 사용하여 페이지별 게시물을 가져옴
         return cboardRepository.findAllByOrderByCreatedAtDesc(pageable);
+    }
+
+    public Cboard getBoardById(Long id) {
+        Optional<Cboard> boardOptional = cboardRepository.findById(id);
+        return boardOptional.orElse(null);
     }
 
     public Cboard createBoard(Cboard boardDto, String token) {

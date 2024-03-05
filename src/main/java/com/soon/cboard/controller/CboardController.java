@@ -22,12 +22,6 @@ public class CboardController {
     private CboardService cboardService;
 
 
-//    @GetMapping("/boards")
-//    public List<Cboard> getAllBoards() {
-//        System.out.println("지금 이게 출력 되면 안돼;;;");
-//        return cboardService.getAllBoards();
-//    }
-
     @GetMapping("/boards")
     public Page<Cboard> getBoardsByPage(@RequestParam(defaultValue = "0") int page,
                                         @RequestParam(defaultValue = "10") int pageSize) {
@@ -37,6 +31,12 @@ public class CboardController {
         PageRequest pageRequest = PageRequest.of(page, pageSize);
 
         return cboardService.getBoardsByPage(pageRequest);
+    }
+
+    @GetMapping("/board/{id}")
+    public Cboard getBoardById(@PathVariable Long id) {
+        System.out.println("전송 완료");
+        return cboardService.getBoardById(id);
     }
 
     @PostMapping("/board")
