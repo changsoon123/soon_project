@@ -3,6 +3,7 @@ package com.soon.cboard.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -16,7 +17,10 @@ public class Cboard {
     private String nickname;
     private String title;
     private String content;
-    private Date createdAt;
+
+
+    @Column(columnDefinition = "TIMESTAMP")
+    private LocalDateTime createdAt;
 
 
 }

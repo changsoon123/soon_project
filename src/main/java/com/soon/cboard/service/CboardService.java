@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +42,7 @@ public class CboardService {
         board.setNickname(userInfo.getUserNick());
         board.setTitle(boardDto.getTitle());
         board.setContent(boardDto.getContent());
-        board.setCreatedAt(new Date());
+        board.setCreatedAt(LocalDateTime.now());
         return cboardRepository.save(board);
     }
 
@@ -61,6 +62,20 @@ public class CboardService {
 
     public void deleteBoard(Long id) {
         cboardRepository.deleteById(id);
+    }
+
+    public boolean hasPermission(Long id, String userNick) {
+        // 게시물을 ID로 찾습니다.
+        Optional<Cboard> optionalCboard = cboardRepository.findById(id);
+        System.out.println(optionalCboard);
+        // 게시물이 존재하지 않을 경우 권한이 없음을 반환합니다.
+        if (optionalCboard.isEmpty()) {
+            return false;
+        }
+
+        // 게시물을 작성한 사용자의 닉네임과 주어진 사용자 닉네임을 비교하여 권한을 확인합니다.
+        Cboard board = optionalCboard.get();
+        return board.getNickname().equals(userNick);
     }
 
 }

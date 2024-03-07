@@ -9,9 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -20,6 +23,9 @@ public class CboardController {
 
     @Autowired
     private CboardService cboardService;
+
+    @Autowired
+    private TokenProvider tokenProvider;
 
 
     @GetMapping("/boards")
@@ -35,7 +41,6 @@ public class CboardController {
 
     @GetMapping("/board/{id}")
     public Cboard getBoardById(@PathVariable Long id) {
-        System.out.println("전송 완료");
         return cboardService.getBoardById(id);
     }
 
@@ -52,5 +57,21 @@ public class CboardController {
     @DeleteMapping("/board/{id}")
     public void deleteBoard(@PathVariable Long id) {
         cboardService.deleteBoard(id);
+    }
+
+    @GetMapping("/board/check-permission/{id}")
+    public ResponseEntity<Map<String, Boolean>> checkPermission(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+
+
+        // 토큰에서 사용자 정보를 추출
+        TokenUserInfo userInfo = tokenProvider.validateAndReturnTokenUserInfo(token.substring(7));
+
+        // 게시물 작성자와 현재 사용자의 닉네임을 확인하여 권한 부여 여부 결정
+        boolean hasPermission = cboardService.hasPermission(id, userInfo.getUserNick());
+
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("hasPermission", hasPermission);
+
+        return ResponseEntity.ok(response);
     }
 }
