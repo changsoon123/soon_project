@@ -4,16 +4,26 @@ import com.soon.cboard.entity.Cboard;
 import com.soon.cboard.repository.CboardRepository;
 import com.soon.jwt.TokenProvider;
 import com.soon.jwt.TokenUserInfo;
+import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class CboardService {
@@ -36,13 +46,37 @@ public class CboardService {
         return boardOptional.orElse(null);
     }
 
-    public Cboard createBoard(Cboard boardDto, String token) {
-        TokenUserInfo userInfo = tokenProvider.validateAndReturnTokenUserInfo(token.substring(7));
-        Cboard board = new Cboard();
-        board.setNickname(userInfo.getUserNick());
-        board.setTitle(boardDto.getTitle());
-        board.setContent(boardDto.getContent());
-        board.setCreatedAt(LocalDateTime.now());
+    public Cboard createBoard(Cboard board, MultipartFile file, String token) {
+        try {
+            if (file == null || file.isEmpty()) {
+                throw new IllegalArgumentException("파일이 비어 있습니다.");
+            }
+
+
+            String uploadDirectory = "/path/to/upload/directory";
+            Path uploadPath = Paths.get(uploadDirectory);
+            Files.createDirectories(uploadPath);
+
+
+            String fileName = Optional.ofNullable(file.getOriginalFilename())
+                    .map(StringUtils::cleanPath)
+                    .map(name -> UUID.randomUUID().toString() + "_" + name)
+                    .orElseThrow(() -> new IllegalArgumentException("파일 이름을 가져올 수 없습니다."));
+
+            // 파일을 서버에 저장
+            try (InputStream inputStream = file.getInputStream()) {
+                Files.copy(inputStream, uploadPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
+            }
+
+
+            board.setFilePath(uploadPath.resolve(fileName).toString());
+
+        } catch (IOException ex) {
+
+            throw new FileUploadException("파일 업로드 중 오류가 발생했습니다.", ex);
+        }
+
+        // 게시글 저장
         return cboardRepository.save(board);
     }
 

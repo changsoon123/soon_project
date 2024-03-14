@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -45,8 +46,11 @@ public class CboardController {
     }
 
     @PostMapping("/board")
-    public Cboard createBoard(@RequestBody Cboard board, @RequestHeader("Authorization") String token) {
-        return cboardService.createBoard(board,token);
+    public Cboard createBoard(@RequestPart("board") Cboard board,
+                              @RequestPart("file") MultipartFile file,
+                              @RequestHeader("Authorization") String token) {
+        // 파일 처리 로직 추가
+        return cboardService.createBoard(board, file, token);
     }
 
     @PutMapping("/board/{id}")
