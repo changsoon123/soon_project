@@ -47,7 +47,11 @@ public class CboardService {
     }
 
     public Cboard createBoard(Cboard board, String token) {
-        // 게시물 생성 시간 설정
+
+        TokenUserInfo userInfo = tokenProvider.validateAndReturnTokenUserInfo(token.substring(7));
+        board.setNickname(userInfo.getUserNick());
+        board.setTitle(board.getTitle());
+        board.setContent(board.getContent());
         board.setCreatedAt(LocalDateTime.now());
 
         // 파일 URL을 포함하여 게시물을 저장합니다.

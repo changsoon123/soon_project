@@ -50,14 +50,23 @@ public class CboardController {
     }
 
     @PostMapping("/board")
-    public Cboard createBoard(@RequestPart("board") Cboard board,
+    public Cboard createBoard(@RequestPart("title") String title,
+                              @RequestPart("content") String content,
                               @RequestPart(value = "file", required = false) MultipartFile file,
                               @RequestHeader("Authorization") String token) {
+
+
         try {
 
-            String fileUrl = fileUploadService.uploadFile(file);
+            Cboard board = new Cboard();
+            board.setTitle(title);
+            board.setContent(content);
 
-            board.setFileUrl(fileUrl);
+            System.out.println(file);
+            if (file != null && !file.isEmpty()) {
+                String fileUrl = fileUploadService.uploadFile(file);
+                board.setFileUrl(fileUrl);
+            }
 
             return cboardService.createBoard(board, token);
 

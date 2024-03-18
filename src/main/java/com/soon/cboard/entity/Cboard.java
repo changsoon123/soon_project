@@ -18,6 +18,7 @@ public class Cboard {
     private String title;
     private String content;
 
+    @Column(nullable = true)
     private String fileUrl;
 
     @Column(columnDefinition = "TIMESTAMP")
