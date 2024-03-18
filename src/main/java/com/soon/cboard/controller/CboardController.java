@@ -2,6 +2,7 @@ package com.soon.cboard.controller;
 
 import com.soon.cboard.entity.Cboard;
 import com.soon.cboard.service.CboardService;
+import com.soon.cboard.service.FileUploadService;
 import com.soon.jwt.TokenProvider;
 import com.soon.jwt.TokenUserInfo;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +30,8 @@ public class CboardController {
     @Autowired
     private TokenProvider tokenProvider;
 
+    @Autowired
+    private FileUploadService fileUploadService;
 
     @GetMapping("/boards")
     public Page<Cboard> getBoardsByPage(@RequestParam(defaultValue = "0") int page,
@@ -47,10 +51,22 @@ public class CboardController {
 
     @PostMapping("/board")
     public Cboard createBoard(@RequestPart("board") Cboard board,
-                              @RequestPart("file") MultipartFile file,
+                              @RequestPart(value = "file", required = false) MultipartFile file,
                               @RequestHeader("Authorization") String token) {
-        // 파일 처리 로직 추가
-        return cboardService.createBoard(board, file, token);
+        try {
+
+            String fileUrl = fileUploadService.uploadFile(file);
+
+            board.setFileUrl(fileUrl);
+
+            return cboardService.createBoard(board, token);
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+
+            return null;
+        }
     }
 
     @PutMapping("/board/{id}")

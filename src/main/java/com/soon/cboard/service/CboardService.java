@@ -46,38 +46,15 @@ public class CboardService {
         return boardOptional.orElse(null);
     }
 
-    public Cboard createBoard(Cboard board, MultipartFile file, String token) {
-        try {
-            if (file == null || file.isEmpty()) {
-                throw new IllegalArgumentException("파일이 비어 있습니다.");
-            }
+    public Cboard createBoard(Cboard board, String token) {
+        // 게시물 생성 시간 설정
+        board.setCreatedAt(LocalDateTime.now());
 
+        // 파일 URL을 포함하여 게시물을 저장합니다.
+        Cboard savedBoard = cboardRepository.save(board);
 
-            String uploadDirectory = "/path/to/upload/directory";
-            Path uploadPath = Paths.get(uploadDirectory);
-            Files.createDirectories(uploadPath);
-
-
-            String fileName = Optional.ofNullable(file.getOriginalFilename())
-                    .map(StringUtils::cleanPath)
-                    .map(name -> UUID.randomUUID().toString() + "_" + name)
-                    .orElseThrow(() -> new IllegalArgumentException("파일 이름을 가져올 수 없습니다."));
-
-            // 파일을 서버에 저장
-            try (InputStream inputStream = file.getInputStream()) {
-                Files.copy(inputStream, uploadPath.resolve(fileName), StandardCopyOption.REPLACE_EXISTING);
-            }
-
-
-            board.setFilePath(uploadPath.resolve(fileName).toString());
-
-        } catch (IOException ex) {
-
-            throw new FileUploadException("파일 업로드 중 오류가 발생했습니다.", ex);
-        }
-
-        // 게시글 저장
-        return cboardRepository.save(board);
+        // 저장된 게시물을 반환합니다.
+        return savedBoard;
     }
 
     public Cboard updateBoard(Long id, Cboard updatedBoardDto) {

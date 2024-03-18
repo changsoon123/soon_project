@@ -18,6 +18,7 @@ public class Cboard {
     private String title;
     private String content;
 
+    private String fileUrl;
 
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime createdAt;
