@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -20,6 +21,11 @@ public class Cboard {
 
     @Column(nullable = true)
     private String fileUrl;
+
+    @ElementCollection
+    @CollectionTable(name = "cboard_file_urls", joinColumns = @JoinColumn(name = "cboard_id"))
+    @Column(name = "file_url")
+    private List<String> fileUrls;
 
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime createdAt;

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,28 +53,25 @@ public class CboardController {
     @PostMapping("/board")
     public Cboard createBoard(@RequestPart("title") String title,
                               @RequestPart("content") String content,
-                              @RequestPart(value = "file", required = false) MultipartFile file,
+                              @RequestPart(value = "file", required = false) List<MultipartFile> files,
                               @RequestHeader("Authorization") String token) {
 
-
         try {
-
             Cboard board = new Cboard();
             board.setTitle(title);
             board.setContent(content);
 
-            System.out.println(file);
-            if (file != null && !file.isEmpty()) {
-                String fileUrl = fileUploadService.uploadFile(file);
-                board.setFileUrl(fileUrl);
+            System.out.println(files);
+
+            // 여러 개의 파일을 처리하는 로직
+            if (files != null && !files.isEmpty()) {
+                List<String> fileUrls = fileUploadService.uploadFiles(files);
+                board.setFileUrls(fileUrls);
             }
 
             return cboardService.createBoard(board, token);
-
-        } catch (IOException e) {
-
+        } catch (Exception e) {
             e.printStackTrace();
-
             return null;
         }
     }
