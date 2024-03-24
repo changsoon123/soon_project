@@ -61,7 +61,7 @@ public class CboardController {
             board.setTitle(title);
             board.setContent(content);
 
-            System.out.println(files);
+//            System.out.println(files);
 
             // 여러 개의 파일을 처리하는 로직
             if (files != null && !files.isEmpty()) {
