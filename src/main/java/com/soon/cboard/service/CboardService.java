@@ -2,34 +2,26 @@ package com.soon.cboard.service;
 
 import com.soon.cboard.entity.Cboard;
 import com.soon.cboard.repository.CboardRepository;
+import com.soon.cboard.repository.CommentRepository;
 import com.soon.jwt.TokenProvider;
 import com.soon.jwt.TokenUserInfo;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class CboardService {
 
     @Autowired
     private CboardRepository cboardRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
 
     @Autowired
     private TokenProvider tokenProvider;
@@ -74,9 +66,11 @@ public class CboardService {
         }
     }
 
+    @Transactional
     public void deleteBoard(Long id) {
+        commentRepository.deleteByBoardId(id);
         cboardRepository.deleteById(id);
-    }
+        }
 
     public boolean hasPermission(Long id, String userNick) {
         // 게시물을 ID로 찾습니다.

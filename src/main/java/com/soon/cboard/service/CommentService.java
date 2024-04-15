@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CommentService {
@@ -24,7 +25,7 @@ public class CommentService {
     }
 
     public List<Comment> getAllCommentsByBoardId(Long boardId) {
-        return commentRepository.findByBoardId(boardId);
+        return commentRepository.findByBoardIdOrderByCreatedAtDesc(boardId);
     }
 
     public Comment addComment(Comment comment, String token) {
@@ -35,4 +36,21 @@ public class CommentService {
         comment.setCreatedAt(LocalDateTime.now());
         return commentRepository.save(comment);
     }
+
+    public boolean deleteComment(Long commentId) {
+        Comment comment = commentRepository.findById(commentId).orElse(null);
+        if (comment != null) {
+            commentRepository.delete(comment);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public Comment getCommentById(Long id) {
+        Optional<Comment> commentOptional = commentRepository.findById(id);
+        return commentOptional.orElse(null);
+    }
+
+
 }
