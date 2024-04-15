@@ -50,8 +50,6 @@ public class CboardService {
 
         TokenUserInfo userInfo = tokenProvider.validateAndReturnTokenUserInfo(token.substring(7));
         board.setNickname(userInfo.getUserNick());
-        board.setTitle(board.getTitle());
-        board.setContent(board.getContent());
         board.setCreatedAt(LocalDateTime.now());
 
         // 파일 URL을 포함하여 게시물을 저장합니다.
@@ -61,13 +59,14 @@ public class CboardService {
         return savedBoard;
     }
 
-    public Cboard updateBoard(Long id, Cboard updatedBoardDto) {
+    public Cboard updateBoard(Long id, Cboard board) {
         Optional<Cboard> existingBoardOptional = cboardRepository.findById(id);
 
         if (existingBoardOptional.isPresent()) {
             Cboard existingBoard = existingBoardOptional.get();
-            existingBoard.setTitle(updatedBoardDto.getTitle());
-            existingBoard.setContent(updatedBoardDto.getContent());
+            existingBoard.setTitle(board.getTitle());
+            existingBoard.setContent(board.getContent());
+            existingBoard.setFileUrls(board.getFileUrls());
             return cboardRepository.save(existingBoard);
         } else {
             // 찾지 못했을 때 처리

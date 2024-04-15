@@ -77,8 +77,31 @@ public class CboardController {
     }
 
     @PutMapping("/board/{id}")
-    public Cboard updateBoard(@PathVariable Long id, @RequestBody Cboard updatedBoard) {
-        return cboardService.updateBoard(id, updatedBoard);
+    public Cboard updateBoard(
+                                @PathVariable Long id,
+                                @RequestPart("title") String title,
+                                @RequestPart("content") String content,
+                                @RequestPart(value = "file", required = false) List<MultipartFile> files
+                                ) {
+        try {
+            Cboard board = new Cboard();
+            board.setTitle(title);
+            board.setContent(content);
+
+//            System.out.println(files);
+
+            // 여러 개의 파일을 처리하는 로직
+            if (files != null && !files.isEmpty()) {
+                List<String> fileUrls = fileUploadService.uploadFiles(files);
+                board.setFileUrls(fileUrls);
+            }
+
+            return cboardService.updateBoard(id, board);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     @DeleteMapping("/board/{id}")
