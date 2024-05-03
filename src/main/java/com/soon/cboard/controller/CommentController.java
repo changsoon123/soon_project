@@ -1,7 +1,6 @@
 package com.soon.cboard.controller;
 
 import com.soon.cboard.entity.Comment;
-import com.soon.cboard.repository.CommentRepository;
 import com.soon.cboard.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
