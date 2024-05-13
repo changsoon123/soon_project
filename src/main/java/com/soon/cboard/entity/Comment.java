@@ -24,9 +24,5 @@ public class Comment {
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime createdAt;
 
-    @ManyToOne
-    @JoinColumn(name = "parent_id")
-    private Comment parentComment;
-
     private Long boardId;
 }

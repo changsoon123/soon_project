@@ -42,18 +42,5 @@ public class CommentController {
         }
     }
 
-    @PostMapping("/addReply/{boardId}/{parentId}")
-    public Comment createReply(@RequestBody Comment comment,
-                               @PathVariable Long boardId,
-                               @PathVariable Long parentId,
-                               @RequestHeader("Authorization") String token) {
 
-        Comment parentComment = commentService.getCommentById(parentId); // CommentService에서 부모 댓글 가져오기
-        comment.setParentComment(parentComment);
-
-
-        comment.setBoardId(boardId);
-
-        return commentService.addComment(comment, token);
-    }
 }
