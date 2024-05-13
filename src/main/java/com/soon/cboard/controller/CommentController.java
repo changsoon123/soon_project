@@ -2,11 +2,14 @@ package com.soon.cboard.controller;
 
 import com.soon.cboard.entity.Comment;
 import com.soon.cboard.service.CommentService;
+import com.soon.jwt.TokenUserInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/comments")
@@ -41,6 +44,22 @@ public class CommentController {
             return ResponseEntity.badRequest().body("댓글 삭제에 실패했습니다.");
         }
     }
+
+//    @GetMapping("/board/check-permission/{id}")
+//    public ResponseEntity<Map<String, Boolean>> checkPermission(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+//
+//
+//        // 토큰에서 사용자 정보를 추출
+//        TokenUserInfo userInfo = tokenProvider.validateAndReturnTokenUserInfo(token.substring(7));
+//
+//        // 게시물 작성자와 현재 사용자의 닉네임을 확인하여 권한 부여 여부 결정
+//        boolean hasPermission = cboardService.hasPermission(id, userInfo.getUserNick());
+//
+//        Map<String, Boolean> response = new HashMap<>();
+//        response.put("hasPermission", hasPermission);
+//
+//        return ResponseEntity.ok(response);
+//    }
 
 
 }

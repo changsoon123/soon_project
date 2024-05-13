@@ -102,7 +102,8 @@ public class CboardController {
     }
 
     @DeleteMapping("/board/{id}")
-    public void deleteBoard(@PathVariable Long id) {
+    public void deleteBoard(@PathVariable Long id
+                            ) {
         cboardService.deleteBoard(id);
     }
 
