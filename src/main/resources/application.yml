@@ -20,3 +20,9 @@ spring:
       org.springframework: DEBUG
       com.example: DEBUG
 
+
+socketio:
+  server:
+    host: localhost
+    port: 9092
+

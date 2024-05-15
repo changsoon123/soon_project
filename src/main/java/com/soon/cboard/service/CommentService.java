@@ -1,5 +1,6 @@
 package com.soon.cboard.service;
 
+import com.soon.cboard.entity.Cboard;
 import com.soon.cboard.entity.Comment;
 import com.soon.cboard.repository.CommentRepository;
 import com.soon.jwt.TokenProvider;
@@ -53,4 +54,17 @@ public class CommentService {
     }
 
 
+    public boolean hasPermission(Long id, String userNick) {
+
+        Optional<Comment> optionalComment = commentRepository.findById(id);
+
+        System.out.println(optionalComment);
+
+        if (optionalComment.isEmpty()) {
+            return false;
+        }
+
+        Comment comment = optionalComment.get();
+        return comment.getAuthor().equals(userNick);
+    }
 }
