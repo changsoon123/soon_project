@@ -1,4 +1,4 @@
-package com.soon.config;
+package com.soon.chat.config;
 
 import com.corundumstudio.socketio.SocketIOServer;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,4 +22,5 @@ public class SocketIOConfig {
 
         return new SocketIOServer(config);
     }
+
 }
