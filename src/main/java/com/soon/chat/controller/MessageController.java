@@ -25,10 +25,11 @@ public class MessageController {
     @CrossOrigin
     @GetMapping("/{room}")
     public ResponseEntity<List<Message>> getMessages(@PathVariable String room) {
+
         return ResponseEntity.ok(messageService.getMessages(room));
     }
 
-    @GetMapping("/message/userinfo")
+    @GetMapping("/userinfo")
     public ResponseEntity<?> checkPermission( @RequestHeader("Authorization") String token) {
 
 
