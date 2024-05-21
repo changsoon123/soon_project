@@ -26,6 +26,9 @@ public class Cboard {
     @Column(name = "file_url")
     private List<String> fileUrls;
 
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BoardTag> boardTags;
+
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime createdAt;
 

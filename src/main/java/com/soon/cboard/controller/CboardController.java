@@ -1,6 +1,9 @@
 package com.soon.cboard.controller;
 
+import com.soon.cboard.entity.BoardTag;
 import com.soon.cboard.entity.Cboard;
+import com.soon.cboard.entity.Tag;
+import com.soon.cboard.repository.TagRepository;
 import com.soon.cboard.service.CboardService;
 import com.soon.cboard.service.FileUploadService;
 import com.soon.jwt.TokenProvider;
@@ -13,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +34,9 @@ public class CboardController {
 
     @Autowired
     private FileUploadService fileUploadService;
+
+    @Autowired
+    private TagRepository tagRepository;
 
     @GetMapping("/boards")
     public Page<Cboard> getBoardsByPage(@RequestParam(defaultValue = "0") int page,
@@ -50,20 +57,39 @@ public class CboardController {
     @PostMapping("/board")
     public Cboard createBoard(@RequestPart("title") String title,
                               @RequestPart("content") String content,
+                              @RequestPart(value="tags", required = false) List<String> tags,
                               @RequestPart(value = "file", required = false) List<MultipartFile> files,
                               @RequestHeader("Authorization") String token) {
 
         try {
+
             Cboard board = new Cboard();
             board.setTitle(title);
             board.setContent(content);
-
+//            board.setBoardTags(boardTags);
 //            System.out.println(files);
 
             // 여러 개의 파일을 처리하는 로직
             if (files != null && !files.isEmpty()) {
                 List<String> fileUrls = fileUploadService.uploadFiles(files);
                 board.setFileUrls(fileUrls);
+            }
+
+            if (tags != null) {
+                List<BoardTag> boardTags = new ArrayList<>();
+                for (String tagName : tags) {
+                    Tag tag = tagRepository.findByName(tagName);
+                    if (tag == null) {
+                        tag = new Tag();
+                        tag.setName(tagName);
+                        tag = tagRepository.save(tag);
+                    }
+                    BoardTag boardTag = new BoardTag();
+                    boardTag.setTag(tag);
+                    boardTag.setBoard(board);  // 보드와의 관계 설정
+                    boardTags.add(boardTag);
+                }
+                board.setBoardTags(boardTags);
             }
 
             return cboardService.createBoard(board, token);
