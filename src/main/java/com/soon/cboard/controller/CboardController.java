@@ -1,5 +1,7 @@
 package com.soon.cboard.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.soon.cboard.entity.BoardTag;
 import com.soon.cboard.entity.Cboard;
 import com.soon.cboard.entity.Tag;
@@ -38,6 +40,9 @@ public class CboardController {
     @Autowired
     private TagRepository tagRepository;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @GetMapping("/boards")
     public Page<Cboard> getBoardsByPage(@RequestParam(defaultValue = "0") int page,
                                         @RequestParam(defaultValue = "10") int pageSize) {
@@ -57,11 +62,14 @@ public class CboardController {
     @PostMapping("/board")
     public Cboard createBoard(@RequestPart("title") String title,
                               @RequestPart("content") String content,
-                              @RequestPart(value="tags", required = false) List<String> tags,
+                              @RequestPart(value="tags", required = false) String tags,
                               @RequestPart(value = "file", required = false) List<MultipartFile> files,
                               @RequestHeader("Authorization") String token) {
 
         try {
+
+            System.out.println(tags);
+
 
             Cboard board = new Cboard();
             board.setTitle(title);
@@ -75,22 +83,22 @@ public class CboardController {
                 board.setFileUrls(fileUrls);
             }
 
-            if (tags != null) {
-                List<BoardTag> boardTags = new ArrayList<>();
-                for (String tagName : tags) {
-                    Tag tag = tagRepository.findByName(tagName);
-                    if (tag == null) {
-                        tag = new Tag();
-                        tag.setName(tagName);
-                        tag = tagRepository.save(tag);
-                    }
-                    BoardTag boardTag = new BoardTag();
-                    boardTag.setTag(tag);
-                    boardTag.setBoard(board);  // 보드와의 관계 설정
-                    boardTags.add(boardTag);
-                }
-                board.setBoardTags(boardTags);
-            }
+//            if (tags != null) {
+//                List<BoardTag> boardTags = new ArrayList<>();
+//                for (String tagName : tags) {
+//                    Tag tag = tagRepository.findByName(tagName);
+//                    if (tag == null) {
+//                        tag = new Tag();
+//                        tag.setName(tagName);
+//                        tag = tagRepository.save(tag);
+//                    }
+//                    BoardTag boardTag = new BoardTag();
+//                    boardTag.setTag(tag);
+//                    boardTag.setBoard(board);  // 보드와의 관계 설정
+//                    boardTags.add(boardTag);
+//                }
+//                board.setBoardTags(boardTags);
+//            }
 
             return cboardService.createBoard(board, token);
         } catch (Exception e) {
