@@ -3,6 +3,7 @@ package com.soon.cboard.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,7 +16,6 @@ public class Tag {
 
     private String name;
 
-    @OneToMany(mappedBy = "tag")
-    private List<BoardTag> boardTags;
+    private Long cboardId;
 
 }

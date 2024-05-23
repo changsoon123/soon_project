@@ -1,17 +1,23 @@
 package com.soon.cboard.service;
 
 import com.soon.cboard.entity.Cboard;
+import com.soon.cboard.entity.Tag;
 import com.soon.cboard.repository.CboardRepository;
 import com.soon.cboard.repository.CommentRepository;
+import com.soon.cboard.repository.TagRepository;
 import com.soon.jwt.TokenProvider;
 import com.soon.jwt.TokenUserInfo;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -22,6 +28,10 @@ public class CboardService {
 
     @Autowired
     private CommentRepository commentRepository;
+
+
+    @Autowired
+    private TagRepository tagRepository;
 
     @Autowired
     private TokenProvider tokenProvider;
@@ -38,7 +48,8 @@ public class CboardService {
         return boardOptional.orElse(null);
     }
 
-    public Cboard createBoard(Cboard board, String token) {
+
+    public ResponseEntity<Cboard> createBoard(Cboard board, List<String> tagNames, String token) {
 
         TokenUserInfo userInfo = tokenProvider.validateAndReturnTokenUserInfo(token.substring(7));
         board.setNickname(userInfo.getUserNick());
@@ -47,8 +58,29 @@ public class CboardService {
         // 파일 URL을 포함하여 게시물을 저장합니다.
         Cboard savedBoard = cboardRepository.save(board);
 
+        List<Tag> tags = new ArrayList<>();
+        if (tagNames != null && !tagNames.isEmpty()) {
+            for (String tagName : tagNames) {
+                Optional<Tag> optionalTag = tagRepository.findByName(tagName);
+                Tag tag;
+                if (optionalTag.isPresent()) {
+                    tag = optionalTag.get();
+                } else {
+                    tag = new Tag();
+                    tag.setName(tagName);
+                    tag.setCboardId(savedBoard.getId());
+                    tag = tagRepository.save(tag);
+                }
+
+                tags.add(tag);
+            }
+
+        }
+
+        savedBoard.setTags(tags);
+        savedBoard = cboardRepository.save(savedBoard);
         // 저장된 게시물을 반환합니다.
-        return savedBoard;
+        return ResponseEntity.status(HttpStatus.OK).body(savedBoard);
     }
 
     public Cboard updateBoard(Long id, Cboard board) {

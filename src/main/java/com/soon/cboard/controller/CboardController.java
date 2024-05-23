@@ -2,9 +2,7 @@ package com.soon.cboard.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.soon.cboard.entity.BoardTag;
 import com.soon.cboard.entity.Cboard;
-import com.soon.cboard.entity.Tag;
 import com.soon.cboard.repository.TagRepository;
 import com.soon.cboard.service.CboardService;
 import com.soon.cboard.service.FileUploadService;
@@ -18,10 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @RestController
@@ -60,7 +55,7 @@ public class CboardController {
     }
 
     @PostMapping("/board")
-    public Cboard createBoard(@RequestPart("title") String title,
+    public ResponseEntity<Cboard> createBoard(@RequestPart("title") String title,
                               @RequestPart("content") String content,
                               @RequestPart(value="tags", required = false) String tags,
                               @RequestPart(value = "file", required = false) List<MultipartFile> files,
@@ -68,8 +63,15 @@ public class CboardController {
 
         try {
 
-            System.out.println(tags);
+//            System.out.println(tags);
 
+            List<String> tagNames;
+            if (tags != null && !tags.isEmpty()) {
+                tagNames = objectMapper.readValue(tags, new TypeReference<List<String>>(){});
+            } else {
+                tagNames = Collections.emptyList();
+            }
+//            System.out.println(tagList);
 
             Cboard board = new Cboard();
             board.setTitle(title);
@@ -83,24 +85,7 @@ public class CboardController {
                 board.setFileUrls(fileUrls);
             }
 
-//            if (tags != null) {
-//                List<BoardTag> boardTags = new ArrayList<>();
-//                for (String tagName : tags) {
-//                    Tag tag = tagRepository.findByName(tagName);
-//                    if (tag == null) {
-//                        tag = new Tag();
-//                        tag.setName(tagName);
-//                        tag = tagRepository.save(tag);
-//                    }
-//                    BoardTag boardTag = new BoardTag();
-//                    boardTag.setTag(tag);
-//                    boardTag.setBoard(board);  // 보드와의 관계 설정
-//                    boardTags.add(boardTag);
-//                }
-//                board.setBoardTags(boardTags);
-//            }
-
-            return cboardService.createBoard(board, token);
+            return cboardService.createBoard(board,tagNames,token);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

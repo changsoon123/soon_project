@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -26,11 +27,14 @@ public class Cboard {
     @Column(name = "file_url")
     private List<String> fileUrls;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<BoardTag> boardTags;
+    @ManyToMany
+    @JoinTable(
+            name = "cboard_tags",
+            joinColumns = @JoinColumn(name = "cboard_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
+    private List<Tag> tags = new ArrayList<>();
 
     @Column(columnDefinition = "TIMESTAMP")
     private LocalDateTime createdAt;
-
 
 }
